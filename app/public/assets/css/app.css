@@ -1,0 +1,33 @@
+#main-menu .dropdown-menu {
+	left: unset !important;
+	right: 0 !important;
+}
+
+#game-board {
+	background: #0074b3;
+	width: 730px;
+	cursor: pointer;
+	margin: auto;
+	border: 5px solid #0b4e72;
+}
+
+#game-board .column {
+	width: 100px;
+	display: inline-block;
+}
+
+#game-board .column:hover circle.free {
+	fill: #d5e4ed;
+}
+
+#game-board circle.free {
+	fill: #fff;
+}
+
+#game-board circle.red {
+	fill: #d50000;
+}
+
+#game-board circle.yellow {
+	fill: #dad400;
+}

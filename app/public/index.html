@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Connect 4</title>
+		<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+		<link rel="stylesheet" href="./assets/vendors/bootstrap/4.5.3/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="./assets/css/app.css" />
+	</head>
+	<body>
+		<div id="app"></div>
+		<!-- TEMPLATES -->
+		<script type="text/template" id="gameboard-fragment">
+			<div id="game-board">
+				<div class="column" id="column-0" data-x="0">
+					<svg height="100" width="100" class="row-5">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-4">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-3">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-2">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-1">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-0">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+				</div>
+				<div class="column" id="column-1" data-x="1">
+					<svg height="100" width="100" class="row-5">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-4">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-3">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-2">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-1">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-0">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+				</div>
+				<div class="column" id="column-2" data-x="2">
+					<svg height="100" width="100" class="row-5">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-4">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-3">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-2">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-1">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-0">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+				</div>
+				<div class="column" id="column-3" data-x="3">
+					<svg height="100" width="100" class="row-5">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-4">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-3">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-2">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-1">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-0">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+				</div>
+				<div class="column" id="column-4" data-x="4">
+					<svg height="100" width="100" class="row-5">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-4">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-3">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-2">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-1">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-0">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+				</div>
+				<div class="column" id="column-5" data-x="5">
+					<svg height="100" width="100" class="row-5">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-4">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-3">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-2">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-1">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-0">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+				</div>
+				<div class="column" id="column-6" data-x="6">
+					<svg height="100" width="100" class="row-5">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-4">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-3">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-2">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-1">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+					<svg height="100" width="100" class="row-0">
+						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
+					</svg>
+				</div>
+			</div>;
+		</script>
+		<script type="text/template" id="navbar-fragment">
+			<nav class="navbar navbar-dark bg-dark shadow">
+				<a class="navbar-brand" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#dashboard')">
+					<img src="./assets/images/logo.svg" width="36" height="31" alt="logo" />
+				</a>
+				<div id="main-menu" class="dropdown float-right">
+					<a class="nav-link dropdown-toggle" href="#" id="main-navbar-list-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<img src="./assets/images/yellow.svg" width="36" height="36" class="rounded-circle" />
+					</a>
+					<div class="dropdown-menu" aria-labelledby="main-navbar-list-menu">
+						<a class="dropdown-item" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#profile')">Προφίλ</a>
+						<a class="dropdown-item" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#logout')">Αποσύνδεση</a>
+					</div>
+				</div>
+			</nav>
+		</script>
+		<script type="text/template" id="profile-fragment">
+			<div class="cotainer">
+				<div class="row justify-content-center">
+					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
+						<div class="card mt-5">
+							<div class="card-header text-center">
+								<ul class="nav nav-pills" id="profile-pills-tab" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link active" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="true">Προφίλ</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="pills-password-tab" data-toggle="pill" href="#pills-password" role="tab" aria-controls="pills-password" aria-selected="false">Κωδικός</a>
+									</li>
+								</ul>
+							</div>
+							<div class="card-body">
+								<div class="tab-content" id="profile-pills-tabContent">
+									<div class="tab-pane fade show active" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+										<form id="profile-update-form">
+											<div class="form-group row">
+												<label for="first_name" class="col-md-4 col-form-label text-md-right">Όνομα</label>
+												<div class="col-md-6">
+													<input type="text" id="first_name" class="form-control" name="first_name" aria-describedby="first_nameHelp" required />
+													<small id="first_nameHelp" class="form-text text-muted">Το Όνομα πρέπει να είναι μόνο λατινικοί χαρακτήρες.</small>
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="last_name" class="col-md-4 col-form-label text-md-right">Επίθετο</label>
+												<div class="col-md-6">
+													<input type="text" id="last_name" class="form-control" name="last_name" aria-describedby="last_nameHelp" required />
+													<small id="last_nameHelp" class="form-text text-muted">Το Επίθετο πρέπει να είναι μόνο λατινικοί χαρακτήρες.</small>
+												</div>
+											</div>
+											<div class="text-center">
+												<button type="button" class="btn btn-link" onclick="$('#profile-update-form').trigger('reset');">Καθαρισμός</button>
+												<button type="submit" class="btn btn-primary">Ανανέωση</button>
+											</div>
+										</form>
+									</div>
+									<div class="tab-pane fade" id="pills-password" role="tabpanel" aria-labelledby="pills-password-tab">
+										<form id="password-update-form">
+											<div class="form-group row">
+												<label for="password" class="col-md-4 col-form-label text-md-right">Παλιός Κωδικός</label>
+												<div class="col-md-6">
+													<input type="password" id="old_password" class="form-control" name="old_password" required />
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="password" class="col-md-4 col-form-label text-md-right">Νέος Κωδικός</label>
+												<div class="col-md-6">
+													<input type="password" id="new_password" class="form-control" name="new_password" aria-describedby="newPasswordHelp" required />
+													<small id="newPasswordHelp" class="form-text text-muted">Ο Κωδικός πρέπει να είναι μόνο λατινικούς χαρακτήρες και να έχει τουλάχιστον δυο κεφαλαία, δύο μικρά, δύο συμβολά και δύο αριθμούς.</small>
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="password" class="col-md-4 col-form-label text-md-right">Νέος Κωδικός Ξανά</label>
+												<div class="col-md-6">
+													<input type="password" id="new_password2" class="form-control" name="new_password2" required />
+												</div>
+											</div>
+											<div class="text-center">
+												<button type="button" class="btn btn-link" onclick="$('#password-update-form').trigger('reset');">Καθαρισμός</button>
+												<button type="submit" class="btn btn-primary">Ανανέωση</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+		<script type="text/template" id="login-template">
+			<div class="cotainer">
+				<div class="row justify-content-center">
+					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
+						<div class="card mt-5">
+							<form id="login-form">
+								<div class="card-header text-center">Σύνδεση</div>
+								<div class="card-body">
+									<p class="text-center">
+										<a href="javascript: void(0);" onclick="window.app.ui.gotToHash('#register')" >Δεν έχετε λογαριασμό; Παρακαλώ δημιουργείστε έναν.</a>
+									</p>
+									<div class="form-group row">
+										<label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
+										<div class="col-md-6">
+											<input type="text" id="email" class="form-control" name="email" required/>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="password" class="col-md-4 col-form-label text-md-right">Κωδικός</label>
+										<div class="col-md-6">
+											<input type="password" id="password" class="form-control" name="password" required />
+										</div>
+									</div>
+								</div>
+								<div class="card-footer text-center">
+									<button type="button" class="btn btn-link" onclick="$('#login-form').trigger('reset');">Καθαρισμός</button>
+									<button type="submit" class="btn btn-primary">Σύνδεση</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+		<script type="text/template" id="register-template">
+			<div class="cotainer">
+				<div class="row justify-content-center">
+					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
+						<div class="card mt-5">
+							<form id="register-form">
+								<div class="card-header text-center">Εγγραφή</div>
+								<div class="card-body">
+									<p class="text-center">
+										<a href="javascript: void(0);" onclick="window.app.ui.gotToHash('#login')" >Έχετε ήδη λογαριασμό; Συνδεθείτε.</a>
+									</p>
+									<div class="form-group row">
+										<label for="first_name" class="col-md-4 col-form-label text-md-right">Όνομα</label>
+										<div class="col-md-6">
+											<input type="text" id="first_name" class="form-control" name="first_name" aria-describedby="first_nameHelp" required />
+											<small id="first_nameHelp" class="form-text text-muted">Το Όνομα πρέπει να είναι μόνο λατινικοί χαρακτήρες.</small>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="last_name" class="col-md-4 col-form-label text-md-right">Επίθετο</label>
+										<div class="col-md-6">
+											<input type="text" id="last_name" class="form-control" name="last_name" aria-describedby="last_nameHelp" required />
+											<small id="last_nameHelp" class="form-text text-muted">Το Επίθετο πρέπει να είναι μόνο λατινικοί χαρακτήρες.</small>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
+										<div class="col-md-6">
+											<input type="text" id="email" class="form-control" name="email" required />
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="password" class="col-md-4 col-form-label text-md-right">Κωδικός</label>
+										<div class="col-md-6">
+											<input type="password" id="password" class="form-control" name="password" aria-describedby="passwordHelp" required />
+											<small id="passwordHelp" class="form-text text-muted">Ο Κωδικός πρέπει να είναι μόνο λατινικούς χαρακτήρες και να έχει τουλάχιστον δυο κεφαλαία, δύο μικρά, δύο συμβολά και δύο αριθμούς.</small>
+										</div>
+									</div>
+								</div>
+								<div class="card-footer text-center">
+									<button type="button" class="btn btn-link" onclick="$('#register-form').trigger('reset');">Καθαρισμός</button>
+									<button type="submit" class="btn btn-primary">Εγγραφή</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<script src="./assets/vendors/jquery/3.5.1/jquery.slim.min.js"></script>
+		<script src="./assets/vendors/bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+		<script src="./assets/js/utils.js"></script>
+		<script src="./assets/js/socket.js"></script>
+		<script src="./assets/js/ui.js"></script>
+		<script src="./assets/js/events.js"></script>
+		<script src="./assets/js/app.js"></script>
+		<script></script>
+	</body>
+</html>
