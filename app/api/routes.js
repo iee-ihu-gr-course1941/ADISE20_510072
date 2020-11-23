@@ -3,6 +3,10 @@ const { controllers } = require("./controllers");
 const routes = [
 	// Users
 	{
+		action: "/session",
+		handler: controllers.Users.session.bind(controllers.Users),
+	},
+	{
 		action: "/register",
 		handler: controllers.Users.register.bind(controllers.Users),
 	},
@@ -33,16 +37,24 @@ const routes = [
 	},
 	// Games
 	{
-		action: "/games",
-		handler: controllers.Games.games.bind(controllers.Games),
+		action: "/games/open/get",
+		handler: controllers.Games.getOpen.bind(controllers.Games),
 	},
 	{
 		action: "/game/create",
-		handler: controllers.Games.createGame.bind(controllers.Games),
+		handler: controllers.Games.create.bind(controllers.Games),
 	},
 	{
 		action: "/game/join",
-		handler: controllers.Games.joinGame.bind(controllers.Games),
+		handler: controllers.Games.join.bind(controllers.Games),
+	},
+	{
+		action: "/game/make/move",
+		handler: controllers.Games.makeMove.bind(controllers.Games),
+	},
+	{
+		action: "/game/leave",
+		handler: controllers.Games.leave.bind(controllers.Games),
 	},
 ];
 

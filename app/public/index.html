@@ -9,160 +9,92 @@
 		<link rel="stylesheet" href="./assets/css/app.css" />
 	</head>
 	<body>
-		<div id="app"></div>
+		<div class="min-vh-100" id="app"></div>
 		<!-- TEMPLATES -->
+		<script type="text/template" id="game-modal-elem">
+			<div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+				<div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modal-main-header"></h5>
+						</div>
+						<div class="modal-body" id="modal-main-content"></div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Ελαχιστοποίηση</button>
+							<button type="button" class="btn btn-primary">Παραίτηση</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
 		<script type="text/template" id="gameboard-fragment">
-			<div id="game-board">
-				<div class="column" id="column-0" data-x="0">
-					<svg height="100" width="100" class="row-5">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-4">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-3">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-2">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-1">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-0">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
+			<div class="m-auto d-flex flex-row justify-content-between game-board">
+				<div class="column" data-token="" data-x="0">
+					<div class="place free" data-y="5"></div>
+					<div class="place free" data-y="4"></div>
+					<div class="place free" data-y="3"></div>
+					<div class="place free" data-y="2"></div>
+					<div class="place free" data-y="1"></div>
+					<div class="place free" data-y="0"></div>
 				</div>
-				<div class="column" id="column-1" data-x="1">
-					<svg height="100" width="100" class="row-5">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-4">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-3">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-2">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-1">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-0">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
+				<div class="column" data-token="" data-x="1">
+					<div class="place free" data-y="5"></div>
+					<div class="place free" data-y="4"></div>
+					<div class="place free" data-y="3"></div>
+					<div class="place free" data-y="2"></div>
+					<div class="place free" data-y="1"></div>
+					<div class="place free" data-y="0"></div>
 				</div>
-				<div class="column" id="column-2" data-x="2">
-					<svg height="100" width="100" class="row-5">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-4">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-3">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-2">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-1">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-0">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
+				<div class="column" data-token="" data-x="2">
+					<div class="place free" data-y="5"></div>
+					<div class="place free" data-y="4"></div>
+					<div class="place free" data-y="3"></div>
+					<div class="place free" data-y="2"></div>
+					<div class="place free" data-y="1"></div>
+					<div class="place free" data-y="0"></div>
 				</div>
-				<div class="column" id="column-3" data-x="3">
-					<svg height="100" width="100" class="row-5">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-4">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-3">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-2">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-1">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-0">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
+				<div class="column" data-token="" data-x="3">
+					<div class="place free" data-y="5"></div>
+					<div class="place free" data-y="4"></div>
+					<div class="place free" data-y="3"></div>
+					<div class="place free" data-y="2"></div>
+					<div class="place free" data-y="1"></div>
+					<div class="place free" data-y="0"></div>
 				</div>
-				<div class="column" id="column-4" data-x="4">
-					<svg height="100" width="100" class="row-5">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-4">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-3">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-2">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-1">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-0">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
+				<div class="column" data-token="" data-x="4">
+					<div class="place free" data-y="5"></div>
+					<div class="place free" data-y="4"></div>
+					<div class="place free" data-y="3"></div>
+					<div class="place free" data-y="2"></div>
+					<div class="place free" data-y="1"></div>
+					<div class="place free" data-y="0"></div>
 				</div>
-				<div class="column" id="column-5" data-x="5">
-					<svg height="100" width="100" class="row-5">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-4">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-3">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-2">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-1">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-0">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
+				<div class="column" data-token="" data-x="5">
+					<div class="place free" data-y="5"></div>
+					<div class="place free" data-y="4"></div>
+					<div class="place free" data-y="3"></div>
+					<div class="place free" data-y="2"></div>
+					<div class="place free" data-y="1"></div>
+					<div class="place free" data-y="0"></div>
 				</div>
-				<div class="column" id="column-6" data-x="6">
-					<svg height="100" width="100" class="row-5">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-4">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-3">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-2">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-1">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
-					<svg height="100" width="100" class="row-0">
-						<circle cx="50" cy="50" r="40" stroke="#0B4E72" stroke-width="3" class="free" />
-					</svg>
+				<div class="column" data-token="" data-x="6">
+					<div class="place free" data-y="5"></div>
+					<div class="place free" data-y="4"></div>
+					<div class="place free" data-y="3"></div>
+					<div class="place free" data-y="2"></div>
+					<div class="place free" data-y="1"></div>
+					<div class="place free" data-y="0"></div>
 				</div>
-			</div>;
+			</div>
 		</script>
 		<script type="text/template" id="navbar-fragment">
 			<nav class="navbar navbar-dark bg-dark shadow">
 				<a class="navbar-brand" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#dashboard')">
-					<img src="./assets/images/logo.svg" width="36" height="31" alt="logo" />
+					<img src="./assets/images/logo.svg" width="36" height="31" alt="" />
 				</a>
 				<div id="main-menu" class="dropdown float-right">
 					<a class="nav-link dropdown-toggle" href="#" id="main-navbar-list-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<img src="./assets/images/yellow.svg" width="36" height="36" class="rounded-circle" />
+						<span id="main-navbar-list-name"></span>
 					</a>
 					<div class="dropdown-menu" aria-labelledby="main-navbar-list-menu">
 						<a class="dropdown-item" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#profile')">Προφίλ</a>
@@ -173,7 +105,7 @@
 		</script>
 		<script type="text/template" id="profile-fragment">
 			<div class="cotainer">
-				<div class="row justify-content-center">
+				<div class="row justify-content-center no-gutters">
 					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
 						<div class="card mt-5">
 							<div class="card-header text-center">
@@ -189,6 +121,13 @@
 							<div class="card-body">
 								<div class="tab-content" id="profile-pills-tabContent">
 									<div class="tab-pane fade show active" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+										<div class="text-center">
+											<h3 id="profile-info-name"></h3>
+											<img src="./assets/images/medal.svg" width="64" height="79" alt="" />
+											<h2 id="profile-info-score"></h2>
+											<h6 id="profile-info-registration-data"></h6>
+										</div>
+										<hr class="w-75">
 										<form id="profile-update-form">
 											<div class="form-group row">
 												<label for="first_name" class="col-md-4 col-form-label text-md-right">Όνομα</label>
@@ -244,9 +183,64 @@
 				</div>
 			</div>
 		</script>
+		<script type="text/template" id="game-list-fragment">
+			<div class="cotainer" id="main-game-list">
+				<div class="row justify-content-center no-gutters">
+					<div class="col-10">
+						<div class="card mt-3">
+							<div class="card-header text-center">
+								<button type="button" class="btn btn-primary" id="game-list-btn-create">Δημιούργησε</button>
+							</div>
+							<div class="card-body">
+								<div class="tab-content" id="games-pills-tabContent">
+									<div class="tab-pane fade show active" id="my-games" role="tabpanel" aria-labelledby="my-games-tab">
+										<div class="row" id="game-list-my-games"></div>
+									</div>
+									<div class="tab-pane fade" id="open-games" role="tabpanel" aria-labelledby="open-games-tab">
+										<div class="row" id="game-list-open-games"></div>
+									</div>
+									<div class="tab-pane fade" id="started-games" role="tabpanel" aria-labelledby="started-games-tab">
+										<div class="row" id="game-list-started-games"></div>
+									</div>
+								</div>
+							</div>
+							<div class="card-footer text-center">
+								<ul class="nav nav-pills" id="games-pills-tab" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link active" id="my-games-tab" data-toggle="pill" href="#my-games" role="tab" aria-controls="my-games" aria-selected="true">Τα παιχνίδια μου</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="open-games-tab" data-toggle="pill" href="#open-games" role="tab" aria-controls="open-games" aria-selected="true">Παίξε</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="started-games-tab" data-toggle="pill" href="#started-games" role="tab" aria-controls="started-games" aria-selected="false">Παρακολούθησε</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+		<script type="text/template" id="game-list-card-elem">
+			<div class="card">
+				<div class="card-header text-center">
+				</div>
+				<div class="card-body">
+					<h6 class="text-center" id="game-list-card-elem-player1"></h6>
+					<h1 class="text-center" id="game-list-card-elem-vs">VS</h1>
+					<h6 class="text-center" id="game-list-card-elem-player2">-</h6>
+				</div>
+				<div class="card-footer text-center">
+					<button type="button" class="btn btn-primary" id="game-list-card-elem-btn-continue">Συνέχισε</button>
+					<button type="button" class="btn btn-primary" id="game-list-card-elem-btn-play">Παίξε</button>
+					<button type="button" class="btn btn-primary" id="game-list-card-elem-btn-watch">Παρακολούθησε</button>
+				</div>
+			</div>
+		</script>
 		<script type="text/template" id="login-template">
 			<div class="cotainer">
-				<div class="row justify-content-center">
+				<div class="row justify-content-center no-gutters">
 					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
 						<div class="card mt-5">
 							<form id="login-form">
@@ -280,7 +274,7 @@
 		</script>
 		<script type="text/template" id="register-template">
 			<div class="cotainer">
-				<div class="row justify-content-center">
+				<div class="row justify-content-center no-gutters">
 					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
 						<div class="card mt-5">
 							<form id="register-form">
@@ -327,14 +321,13 @@
 				</div>
 			</div>
 		</script>
-
 		<script src="./assets/vendors/jquery/3.5.1/jquery.slim.min.js"></script>
 		<script src="./assets/vendors/bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+		<script src="./assets/js/init.js"></script>
 		<script src="./assets/js/utils.js"></script>
 		<script src="./assets/js/socket.js"></script>
 		<script src="./assets/js/ui.js"></script>
 		<script src="./assets/js/events.js"></script>
-		<script src="./assets/js/app.js"></script>
 		<script></script>
 	</body>
 </html>

@@ -5,7 +5,7 @@ module.exports = async (req, session) => {
 		error: false,
 		desc: "",
 		resp: null,
-		notify: [],
+		notify: null,
 	};
 
 	if (typeof req.action === "undefined") {
@@ -32,6 +32,7 @@ module.exports = async (req, session) => {
 	resp.error = handlerResp.error;
 	resp.desc = handlerResp.desc;
 	resp.resp = handlerResp.resp;
+	resp.notify = typeof handlerResp.notify !== "undefined" ? handlerResp.notify : [];
 
 	if (typeof req.mid !== "undefined") {
 		resp.rmid = req.mid;

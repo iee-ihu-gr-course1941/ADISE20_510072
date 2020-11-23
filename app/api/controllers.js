@@ -4,6 +4,37 @@ const Games = require("../Classes/Games.Class");
 
 const controllers = {
 	Users: class {
+		async session(payload, session) {
+			let resp = {
+				error: false,
+				desc: "",
+				resp: null,
+			};
+			try {
+				resp.resp = Object.assign({}, session);
+				resp.resp.profile = {};
+				delete resp.resp._sockets;
+				if (typeof session.user_id !== "undefined" && session.user_id != null && String(session.user_id).trim() !== "") {
+					const UsersObj = new Users();
+					const user = await UsersObj.getById(session.user_id).catch((e) => {
+						resp.error = true;
+						resp.desc = e.message;
+					});
+					if (resp.error) {
+						return resp;
+					}
+					delete user.password;
+					session.user_id = parseInt(user.id);
+					resp.resp.profile = user;
+				}
+				return resp;
+			} catch (error) {
+				console.error(error);
+				resp.error = true;
+				resp.desc = "Internal Server Error";
+				return resp;
+			}
+		}
 		async register(payload, session) {
 			let resp = {
 				error: false,
@@ -243,7 +274,7 @@ const controllers = {
 		}
 	},
 	Games: class {
-		async games(payload, session) {
+		async getOpen(payload, session) {
 			let resp = {
 				error: false,
 				desc: "",
@@ -255,6 +286,16 @@ const controllers = {
 					resp.desc = "user must be logged in";
 					return resp;
 				}
+				const GamesObj = new Games();
+				const games = await GamesObj.getOpen().catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = games;
+				return resp;
 			} catch (error) {
 				console.error(error);
 				resp.error = true;
@@ -262,7 +303,7 @@ const controllers = {
 				return resp;
 			}
 		}
-		async createGame(payload, session) {
+		async create(payload, session) {
 			let resp = {
 				error: false,
 				desc: "",
@@ -274,6 +315,16 @@ const controllers = {
 					resp.desc = "user must be logged in";
 					return resp;
 				}
+				const GamesObj = new Games();
+				const token = await GamesObj.create(session.user_id).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = token;
+				return resp;
 			} catch (error) {
 				console.error(error);
 				resp.error = true;
@@ -281,7 +332,7 @@ const controllers = {
 				return resp;
 			}
 		}
-		async joinGame(payload, session) {
+		async join(payload, session) {
 			let resp = {
 				error: false,
 				desc: "",
@@ -293,6 +344,81 @@ const controllers = {
 					resp.desc = "user must be logged in";
 					return resp;
 				}
+				if (typeof payload.token === "undefined" || payload.token == null || String(payload.token).trim() === "") {
+					resp.error = true;
+					resp.desc = "token is required";
+					return resp;
+				}
+				const GamesObj = new Games();
+				const token = await GamesObj.join(payload.token, session.user_id).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = token;
+				return resp;
+			} catch (error) {
+				console.error(error);
+				resp.error = true;
+				resp.desc = "Internal Server Error";
+				return resp;
+			}
+		}
+		async makeMove(payload, session) {
+			let resp = {
+				error: false,
+				desc: "",
+				resp: null,
+			};
+			try {
+				if (typeof session.user_id === "undefined" || session.user_id == null || String(session.user_id).trim() === "") {
+					resp.error = true;
+					resp.desc = "user must be logged in";
+					return resp;
+				}
+				if (typeof payload.token === "undefined" || payload.token == null || String(payload.token).trim() === "") {
+					resp.error = true;
+					resp.desc = "token is required";
+					return resp;
+				}
+				if (typeof payload.x === "undefined" || payload.x == null || String(payload.x).trim() === "") {
+					resp.error = true;
+					resp.desc = "x is required";
+					return resp;
+				}
+				const GamesObj = new Games();
+				const makeMove = await GamesObj.makeMove(payload.token, session.user_id, payload.x).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = makeMove;
+				resp.notify = [makeMove.user_id_1, makeMove.user_id_2];
+				return resp;
+			} catch (error) {
+				console.error(error);
+				resp.error = true;
+				resp.desc = "Internal Server Error";
+				return resp;
+			}
+		}
+		async leave(payload, session) {
+			let resp = {
+				error: false,
+				desc: "",
+				resp: null,
+			};
+			try {
+				if (typeof session.user_id === "undefined" || session.user_id == null || String(session.user_id).trim() === "") {
+					resp.error = true;
+					resp.desc = "user must be logged in";
+					return resp;
+				}
+				return resp;
 			} catch (error) {
 				console.error(error);
 				resp.error = true;

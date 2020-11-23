@@ -3,31 +3,37 @@
 	right: 0 !important;
 }
 
-#game-board {
+.game-board {
 	background: #0074b3;
-	width: 730px;
 	cursor: pointer;
-	margin: auto;
+	border: 5px solid #0b4e72;
+	width: 50vw;
+	height: 40vw;
+}
+
+.game-board .column {
+	width: 14%;
+}
+
+.game-board .column:hover {
+	background-color: #09a4f7;
+}
+
+.game-board .column .place {
+	margin: 3%;
+	height: 16%;
+	border-radius: 50%;
 	border: 5px solid #0b4e72;
 }
 
-#game-board .column {
-	width: 100px;
-	display: inline-block;
+.game-board .column .place.free {
+	background-color: #ffffff;
 }
 
-#game-board .column:hover circle.free {
-	fill: #d5e4ed;
+.game-board .column .place.user-1 {
+	background-color: #d50000;
 }
 
-#game-board circle.free {
-	fill: #fff;
-}
-
-#game-board circle.red {
-	fill: #d50000;
-}
-
-#game-board circle.yellow {
-	fill: #dad400;
+.game-board .column .place.user-2 {
+	background-color: #dad400;
 }

@@ -7,8 +7,8 @@ class User {
 		return new Promise(async (resolve, reject) => {
 			try {
 				user_id = parseInt(user_id);
-				const q = "SELECT `id`, `first_name`, `last_name`, `email`, `password`, `score`, `registered_timestamp`, `blocked` FROM `users` WHERE `id` = ? LIMIT 1";
-				const params = [user_id];
+				let q = "SELECT `id`, `first_name`, `last_name`, `email`, `password`, `score`, `registered_timestamp`, `blocked` FROM `users` WHERE `id` = ? LIMIT 1";
+				let params = [user_id];
 				let [result] = await database.execute(q, params).catch((e) => {
 					throw e;
 				});
@@ -29,8 +29,8 @@ class User {
 				if (!_utils.validateEmail(email)) {
 					throw new Error("Not valid email");
 				}
-				const q = "SELECT `id`, `first_name`, `last_name`, `email`, `password`, `score`, `registered_timestamp`, `blocked` FROM `users` WHERE `email` = ? LIMIT 1";
-				const params = [email];
+				let q = "SELECT `id`, `first_name`, `last_name`, `email`, `password`, `score`, `registered_timestamp`, `blocked` FROM `users` WHERE `email` = ? LIMIT 1";
+				let params = [email];
 				let [result] = await database.execute(q, params).catch((e) => {
 					throw e;
 				});
@@ -64,8 +64,8 @@ class User {
 					throw new Error("Not valid last name");
 				}
 				const hashed_password = crypto.createHash("sha256").update(password).digest("hex");
-				const q = "INSERT INTO `users`(`first_name`, `last_name`, `email`, `password`, `score`, `registered_timestamp`, `blocked`) VALUES (?,?,?,?,?,?,?)";
-				const params = [first_name, last_name, email, hashed_password, 0, Math.floor(Date.now() / 1000), 0];
+				let q = "INSERT INTO `users`(`first_name`, `last_name`, `email`, `password`, `score`, `registered_timestamp`, `blocked`) VALUES (?,?,?,?,?,?,?)";
+				let params = [first_name, last_name, email, hashed_password, 0, Math.floor(Date.now() / 1000), 0];
 				let [result] = await database.execute(q, params).catch((e) => {
 					throw e;
 				});
@@ -123,8 +123,8 @@ class User {
 				if (user.password !== hashed_old_password) {
 					throw new Error("Old password does not match");
 				}
-				const q = "UPDATE `users` SET `password`=? WHERE `id` = ? LIMIT 1";
-				const params = [hashed_new_password, user.id];
+				let q = "UPDATE `users` SET `password`=? WHERE `id` = ? LIMIT 1";
+				let params = [hashed_new_password, user.id];
 				let [result] = await database.execute(q, params).catch((e) => {
 					throw e;
 				});
@@ -156,8 +156,8 @@ class User {
 				if (parseInt(user.blocked) === 1) {
 					throw new Error("User is blocked");
 				}
-				const q = "UPDATE `users` SET `first_name`=?, `last_name`=? WHERE `id` = ? LIMIT 1";
-				const params = [first_name, last_name, user.id];
+				let q = "UPDATE `users` SET `first_name`=?, `last_name`=? WHERE `id` = ? LIMIT 1";
+				let params = [first_name, last_name, user.id];
 				let [result] = await database.execute(q, params).catch((e) => {
 					throw e;
 				});

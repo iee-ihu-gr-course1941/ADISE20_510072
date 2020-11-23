@@ -1,5 +1,6 @@
 const WebSocket = require("ws");
 const http_server = require("./Classes/HTTP.Server.Class")("public");
+const Session = require("./Classes/Session.Class");
 const _utils = require("./Classes/Utils.Class");
 const _api = require("./api/api");
 
@@ -35,38 +36,31 @@ Servers.ws.server.on("connection", (socket, request) => {
 		return;
 	}
 
-	const _socket_id = request["x-session-id"];
+	const _session_id = request["x-session-id"];
+	const _socket_id = _utils.uuidv4();
 
-	if (!Servers.ws.sessions.hasOwnProperty(_socket_id)) {
-		Servers.ws.sessions[_socket_id] = {
-			id: _socket_id,
-			user_id: null,
-			last_update: new Date().getTime(),
-			_socket: null,
-		};
+	if (!Servers.ws.sessions.hasOwnProperty(_session_id)) {
+		Servers.ws.sessions[_session_id] = new Session(_session_id);
 	}
 
-	Servers.ws.sessions[_socket_id]._socket = socket;
+	Servers.ws.sessions[_session_id].addSocket(_socket_id, socket);
 
-	Servers.ws.sessions[_socket_id]._socket.on("message", async function incoming(message) {
+	socket.on("message", async function incoming(message) {
 		try {
 			const json_message = JSON.parse(message);
-			const response = await _api(json_message, Servers.ws.sessions[_socket_id]).catch((e) => {
+			const response = await _api(json_message, Servers.ws.sessions[_session_id]).catch((e) => {
 				console.log(e);
 			});
 
-			console.log(response);
-
-			if (Servers.ws.sessions.hasOwnProperty(_socket_id) && Servers.ws.sessions[_socket_id]._socket !== null) {
-				Servers.ws.sessions[_socket_id]._socket.send(JSON.stringify(response));
-			}
+			Servers.ws.sessions[_session_id].send(response);
 
 			if (Array.isArray(response.notify)) {
 				for (let i = 0; i < response.notify.length; i++) {
-					const notify_user_id = response.notify[i];
-					const notify_session = Servers.ws.sessions.find((o) => o.user_id === notify_user_id && o._socket !== null);
-					if (typeof notify_session !== "undefined") {
-						notify_session._socket.send(JSON.stringify(response));
+					const notify_user_id = parseInt(response.notify[i]);
+					for (const j in Servers.ws.sessions) {
+						if (Servers.ws.sessions.hasOwnProperty(j) && parseInt(Servers.ws.sessions[j].user_id) === notify_user_id) {
+							Servers.ws.sessions[j].send(response);
+						}
 					}
 				}
 			}
@@ -75,9 +69,8 @@ Servers.ws.server.on("connection", (socket, request) => {
 		}
 	});
 
-	Servers.ws.sessions[_socket_id]._socket.on("close", function close() {
-		Servers.ws.sessions[_socket_id]._socket.close();
-		delete Servers.ws.sessions[_socket_id]._socket;
+	socket.on("close", function close() {
+		Servers.ws.sessions[_session_id].removeSocket(_socket_id);
 	});
 });
 
