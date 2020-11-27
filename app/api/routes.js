@@ -53,6 +53,10 @@ const routes = [
 		handler: controllers.Games.makeMove.bind(controllers.Games),
 	},
 	{
+		action: "/game/get/state",
+		handler: controllers.Games.getCurrentState.bind(controllers.Games),
+	},
+	{
 		action: "/game/leave",
 		handler: controllers.Games.leave.bind(controllers.Games),
 	},

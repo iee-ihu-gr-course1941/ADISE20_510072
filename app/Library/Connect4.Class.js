@@ -1,15 +1,15 @@
 class Connect4 {
 	constructor(board = null) {
-		this.gameBoard = {};
+		this.board = {};
 		this.numRows = 6;
 		this.numCols = 7;
 		if (typeof board === "object" && board !== null) {
-			this.gameBoard = board;
+			this.board = board;
 		} else {
 			for (let x = 0; x <= this.numRows; x++) {
-				this.gameBoard[x] = {};
+				this.board[x] = {};
 				for (let y = 0; y <= this.numCols; y++) {
-					this.gameBoard[x][y] = 0;
+					this.board[x][y] = 0;
 				}
 			}
 		}
@@ -18,7 +18,7 @@ class Connect4 {
 		return this.checkDirection(currentPlayer, currentX, currentY, "vertical") || this.checkDirection(currentPlayer, currentX, currentY, "diagonal") || this.checkDirection(currentPlayer, currentX, currentY, "horizontal");
 	}
 	isBounds(x, y) {
-		return this.gameBoard.hasOwnProperty(x) && typeof this.gameBoard[x][y] !== "undefined";
+		return this.board.hasOwnProperty(x) && typeof this.board[x][y] !== "undefined";
 	}
 	checkDirection(currentPlayer, currentX, currentY, direction) {
 		const directions = {
@@ -40,7 +40,7 @@ class Connect4 {
 		let chainLength = 1;
 		directions[direction].forEach((coords) => {
 			let i = 1;
-			while (this.isBounds(currentX + coords[0] * i, currentY + coords[1] * i) && this.gameBoard[currentX + coords[0] * i][currentY + coords[1] * i] === currentPlayer) {
+			while (this.isBounds(currentX + coords[0] * i, currentY + coords[1] * i) && this.board[currentX + coords[0] * i][currentY + coords[1] * i] === currentPlayer) {
 				chainLength = chainLength + 1;
 				i = i + 1;
 			}
@@ -59,7 +59,7 @@ class Connect4 {
 
 		let nextY = false;
 		for (let y = 0; y < this.numRows; y++) {
-			if (this.gameBoard[x][y] === 0) {
+			if (this.board[x][y] === 0) {
 				nextY = y;
 				break;
 			}
@@ -70,19 +70,19 @@ class Connect4 {
 		}
 
 		resp.y = nextY;
-		this.gameBoard[x][nextY] = currentPlayer;
+		this.board[x][nextY] = currentPlayer;
 
 		if (this.isWinner(currentPlayer, parseInt(x), nextY)) {
 			resp.isEnded = true;
 			resp.isWinner = true;
-			resp.board = this.gameBoard;
+			resp.board = this.board;
 			return resp;
 		}
 
 		let numTurns = 0;
 		for (let x = 0; x <= this.numRows; x++) {
 			for (let y = 0; y <= this.numCols; y++) {
-				if (this.gameBoard[x][y] !== 0) {
+				if (this.board[x][y] !== 0) {
 					numTurns++;
 				}
 			}
@@ -90,11 +90,11 @@ class Connect4 {
 
 		if (numTurns >= this.numRows * this.numCols) {
 			resp.isEnded = true;
-			resp.board = this.gameBoard;
+			resp.board = this.board;
 			return resp;
 		}
 
-		resp.board = this.gameBoard;
+		resp.board = this.board;
 		return resp;
 	}
 }

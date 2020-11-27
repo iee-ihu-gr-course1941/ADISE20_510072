@@ -1,6 +1,6 @@
-const Users = require("../Classes/Users.Class");
-const Stats = require("../Classes/Stats.Class");
-const Games = require("../Classes/Games.Class");
+const Users = require("../Library/Users.Class");
+const Stats = require("../Library/Stats.Class");
+const Games = require("../Library/Games.Class");
 
 const controllers = {
 	Users: class {
@@ -323,7 +323,15 @@ const controllers = {
 				if (resp.error) {
 					return resp;
 				}
-				resp.resp = token;
+				const games = await GamesObj.getOpen().catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = games;
+				resp.notify = "!null";
 				return resp;
 			} catch (error) {
 				console.error(error);
@@ -357,7 +365,15 @@ const controllers = {
 				if (resp.error) {
 					return resp;
 				}
-				resp.resp = token;
+				const games = await GamesObj.getOpen().catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = games;
+				resp.notify = "!null";
 				return resp;
 			} catch (error) {
 				console.error(error);
@@ -398,6 +414,40 @@ const controllers = {
 				}
 				resp.resp = makeMove;
 				resp.notify = [makeMove.user_id_1, makeMove.user_id_2];
+				return resp;
+			} catch (error) {
+				console.error(error);
+				resp.error = true;
+				resp.desc = "Internal Server Error";
+				return resp;
+			}
+		}
+		async getCurrentState(payload, session) {
+			let resp = {
+				error: false,
+				desc: "",
+				resp: null,
+			};
+			try {
+				if (typeof session.user_id === "undefined" || session.user_id == null || String(session.user_id).trim() === "") {
+					resp.error = true;
+					resp.desc = "user must be logged in";
+					return resp;
+				}
+				if (typeof payload.token === "undefined" || payload.token == null || String(payload.token).trim() === "") {
+					resp.error = true;
+					resp.desc = "token is required";
+					return resp;
+				}
+				const GamesObj = new Games();
+				const getCurrentState = await GamesObj.getCurrentState(payload.token).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = getCurrentState;
 				return resp;
 			} catch (error) {
 				console.error(error);

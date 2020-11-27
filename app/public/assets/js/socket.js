@@ -50,13 +50,22 @@
 			window.app.ws.callbacks[data.rmid](data);
 			delete window.app.ws.callbacks[data.rmid];
 		} else {
-			switch (data.action) {
-				case "/game/make/move":
-					window.app.ui.drawBoard(data.resp.token, data.resp.board);
-					break;
+			if (data.error === false) {
+				switch (data.action) {
+					case "/game/make/move":
+					case "/game/get/state":
+						window.app.ui.drawBoard(data.resp);
+						break;
 
-				default:
-					break;
+					case "/games/open/get":
+					case "/game/create":
+					case "/game/join":
+						window.app.ui.drawGameList(data.resp);
+						break;
+
+					default:
+						break;
+				}
 			}
 		}
 	});

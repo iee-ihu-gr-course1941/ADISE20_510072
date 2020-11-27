@@ -278,6 +278,29 @@ class Games {
 				if (result.affectedRows === 0) {
 					throw new Error("Game not joined");
 				}
+				const Connect4Class = new Connect4();
+				q = `
+					INSERT INTO games_history 
+					(
+						game_id, 
+						user_id, 
+						board, 
+						timestamp					
+					)
+					VALUES(
+						?,
+						?,
+						?,
+						?
+					)
+				`;
+				params = [game.id, user_2.id, JSON.stringify(Connect4Class.board), Math.floor(Date.now() / 1000)];
+				[result] = await database.execute(q, params).catch((e) => {
+					throw e;
+				});
+				if (result.affectedRows === 0) {
+					throw new Error("Game initialization not saved");
+				}
 				resolve(game.token);
 			} catch (error) {
 				reject(error);
@@ -345,7 +368,6 @@ class Games {
 				try {
 					makeMove = Connect4Class.makeMove(player, x);
 				} catch (error) {
-					console.log(error);
 					throw new Error("Illegal move");
 				}
 
@@ -421,14 +443,71 @@ class Games {
 				let resp = {
 					token: game.token,
 					user_id_1: game.user_1.id,
+					user_1: game.user_1,
 					user_id_2: game.user_2.id,
+					user_2: game.user_2,
 					board: makeMove.board,
 					isEnded: makeMove.isEnded,
 					winner: makeMove.isWinner ? user.id : null,
+					next: player === 1 ? game.user_2 : game.user_1,
 				};
 				resolve(resp);
 			} catch (error) {
-				console.log(error);
+				reject(error);
+			}
+		});
+	}
+	getCurrentState(token) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				token = String(token).trim();
+
+				const game = await this.getByToken(token).catch((e) => {
+					throw new Error(e.message);
+				});
+
+				const gameHistory = await this.getHistory(game.id).catch((e) => {
+					throw e;
+				});
+
+				let nextUser = null;
+				if (game.status === "STARTED") {
+					if (gameHistory[0].user_id === game.user_1.id) {
+						nextUser = game.user_2;
+					}
+					if (gameHistory[0].user_id === game.user_2.id) {
+						nextUser = game.user_1;
+					}
+				}
+
+				const latestGameHistory = {
+					token: game.token,
+					user_id_1: game.user_1.id,
+					user_1: game.user_1,
+					user_id_2: game.user_2 === null ? null : game.user_2.id,
+					user_2: game.user_2,
+					board: gameHistory.length > 0 ? gameHistory[0].board : null,
+					isEnded: game.status === "COMPLETED" || game.status === "ABANDONED",
+					winner: game.status === "COMPLETED" ? gameHistory[0].user_id : null,
+					next: nextUser,
+				};
+
+				const Connect4Class = new Connect4(latestGameHistory.board);
+				latestGameHistory.board = Connect4Class.board;
+
+				let resp = {
+					token: latestGameHistory.token,
+					user_id_1: latestGameHistory.user_id_1,
+					user_1: latestGameHistory.user_1,
+					user_id_2: latestGameHistory.user_id_2,
+					user_2: latestGameHistory.user_2,
+					board: latestGameHistory.board,
+					isEnded: latestGameHistory.isEnded,
+					winner: latestGameHistory.isWinner,
+					next: latestGameHistory.next,
+				};
+				resolve(resp);
+			} catch (error) {
 				reject(error);
 			}
 		});

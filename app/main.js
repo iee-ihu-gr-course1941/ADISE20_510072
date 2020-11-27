@@ -1,7 +1,8 @@
 const WebSocket = require("ws");
-const http_server = require("./Classes/HTTP.Server.Class")("public");
-const Session = require("./Classes/Session.Class");
-const _utils = require("./Classes/Utils.Class");
+const http_server = require("./Library/HTTP.Server.Class")("public");
+const Session = require("./Library/Session.Class");
+const _utils = require("./Library/Utils.Class");
+const { commonEmitter } = require("./Library/Events.Common");
 const _api = require("./api/api");
 
 const Servers = {
@@ -53,17 +54,6 @@ Servers.ws.server.on("connection", (socket, request) => {
 			});
 
 			Servers.ws.sessions[_session_id].send(response);
-
-			if (Array.isArray(response.notify)) {
-				for (let i = 0; i < response.notify.length; i++) {
-					const notify_user_id = parseInt(response.notify[i]);
-					for (const j in Servers.ws.sessions) {
-						if (Servers.ws.sessions.hasOwnProperty(j) && parseInt(Servers.ws.sessions[j].user_id) === notify_user_id) {
-							Servers.ws.sessions[j].send(response);
-						}
-					}
-				}
-			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -75,6 +65,45 @@ Servers.ws.server.on("connection", (socket, request) => {
 });
 
 Servers.http.server.listen(8000);
+
+commonEmitter.on("_message", async (receivers, message) => {
+	switch (true) {
+		case receivers === "*":
+			for (const j in Servers.ws.sessions) {
+				if (Servers.ws.sessions.hasOwnProperty(j)) {
+					Servers.ws.sessions[j].send(message);
+				}
+			}
+			break;
+		case receivers === "null":
+			for (const j in Servers.ws.sessions) {
+				if (Servers.ws.sessions.hasOwnProperty(j) && Servers.ws.sessions[j].user_id === null) {
+					Servers.ws.sessions[j].send(message);
+				}
+			}
+			break;
+		case receivers === "!null":
+			for (const j in Servers.ws.sessions) {
+				if (Servers.ws.sessions.hasOwnProperty(j) && Servers.ws.sessions[j].user_id !== null) {
+					Servers.ws.sessions[j].send(message);
+				}
+			}
+			break;
+		case Array.isArray(receivers) && receivers.length > 0:
+			for (const j in Servers.ws.sessions) {
+				if (Servers.ws.sessions.hasOwnProperty(j) && receivers.indexOf(parseInt(Servers.ws.sessions[j].user_id)) !== -1) {
+					Servers.ws.sessions[j].send(message);
+				}
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	console.log("custom message");
+	console.log(message);
+});
 
 process
 	.on("unhandledRejection", (reason, p) => {
