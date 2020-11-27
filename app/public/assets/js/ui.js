@@ -331,6 +331,8 @@
 					.html($("<div/>", { class: "alert alert-info w-100", role: "alert" }).html("Δεν βρέθηκαν παιχνίδια. Δημιουργείστε ενα!"));
 				return;
 			}
+			
+			$(gameListFragmentHtml).find(".alert").remove();
 
 			var gameTokens = [];
 			var myGames = [];
