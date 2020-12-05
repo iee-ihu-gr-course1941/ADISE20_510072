@@ -1,6 +1,11 @@
-window.addEventListener("load", function (e) {
-	window.app.ui.gotToHash(window.location.hash);
-}, false);
+window.addEventListener(
+	"load",
+	function (e) {
+		$("#copyright-year").html(new Date().getFullYear());
+		window.app.ui.gotToHash(window.location.hash);
+	},
+	false
+);
 
 window.addEventListener(
 	"hashchange",

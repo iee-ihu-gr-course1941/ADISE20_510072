@@ -10,6 +10,11 @@
 	</head>
 	<body>
 		<div class="min-vh-100" id="app"></div>
+		<footer class="footer bg-dark">
+			<div class="container py-2 text-center">
+				<span class="text-muted">Copyright ©<span id="copyright-year"></span> Αναστάσιος Οικονόμου</span>
+			</div>
+		</footer>
 		<!-- TEMPLATES -->
 		<script type="text/template" id="game-modal-elem">
 			<div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
@@ -243,7 +248,9 @@
 					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
 						<div class="card mt-5">
 							<form id="login-form">
-								<div class="card-header text-center">Σύνδεση</div>
+								<div class="card-header text-center">
+									<img src="./assets/images/logo.svg" width="76" height="71" alt="" />
+								</div>
 								<div class="card-body">
 									<p class="text-center">
 										<a href="javascript: void(0);" onclick="window.app.ui.gotToHash('#register')" >Δεν έχετε λογαριασμό; Παρακαλώ δημιουργείστε έναν.</a>
@@ -277,7 +284,9 @@
 					<div class="col-12 col-md-8 col-lg-6 col-xl-4">
 						<div class="card mt-5">
 							<form id="register-form">
-								<div class="card-header text-center">Εγγραφή</div>
+								<div class="card-header text-center">
+									<img src="./assets/images/logo.svg" width="76" height="71" alt="" />
+								</div>
 								<div class="card-body">
 									<p class="text-center">
 										<a href="javascript: void(0);" onclick="window.app.ui.gotToHash('#login')" >Έχετε ήδη λογαριασμό; Συνδεθείτε.</a>
