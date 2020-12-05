@@ -4,7 +4,7 @@ class Stats {
 	scoreboard() {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const q = "SELECT `first_name`, `last_name`, `email`, `score` FROM `users` WHERE `score` > ? ORDER BY `score` DESC LIMIT 50";
+				const q = "SELECT * FROM `users` WHERE `score` > ? ORDER BY `score` DESC LIMIT 50";
 				const params = [0];
 				let [result] = await database.execute(q, params).catch((e) => {
 					throw e;
@@ -12,7 +12,13 @@ class Stats {
 				if (result.length === 0) {
 					throw new Error("Scoreboard is empty");
 				}
-				resolve(result);
+				let users = [];
+				for (let index = 0; index < result.length; index++) {
+					let user = result[index];
+					delete user.password;
+					users.push(user);
+				}
+				resolve(users);
 			} catch (error) {
 				reject(error);
 			}

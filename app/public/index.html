@@ -23,7 +23,7 @@
 						</div>
 						<div class="modal-body" id="modal-main-content"></div>
 						<div class="modal-footer text-center">
-							<button type="button" class="btn btn-danger">Παραίτηση</button>
+							<button type="button" class="btn btn-danger" id="modal-main-abandon-btn">Παραίτηση</button>
 						</div>
 					</div>
 				</div>
@@ -101,6 +101,7 @@
 					</a>
 					<div class="dropdown-menu" aria-labelledby="main-navbar-list-menu">
 						<a class="dropdown-item" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#dashboard')">Παιχνίδια</a>
+						<a class="dropdown-item" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#scoreboard')">Βαθμολογία</a>
 						<a class="dropdown-item" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#profile')">Προφίλ</a>
 						<a class="dropdown-item" href="javascript: void(0);" onclick="window.app.ui.gotToHash('#logout')">Αποσύνδεση</a>
 					</div>
@@ -197,6 +198,23 @@
 							</div>
 							<div class="card-body">
 								<div class="row" id="game-list-games"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+		<script type="text/template" id="scoreboard-fragment">
+			<div class="cotainer">
+				<div class="row justify-content-center no-gutters">
+					<div class="col-10">
+						<div class="card mt-3">
+							<div class="card-header text-center">
+								<h3>Βαθμολογίες</h3>
+								<img src="./assets/images/medal.svg" width="64" height="79" alt="" />
+							</div>
+							<div class="card-body">
+								<div class="table-responsive" id="main-scoreboard"></div>
 							</div>
 						</div>
 					</div>

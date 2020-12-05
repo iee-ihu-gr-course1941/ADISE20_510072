@@ -274,6 +274,7 @@
 									alert(resp.desc);
 									return;
 								}
+								window.app.ws.send({ action: "/games/open/get" });
 							});
 						});
 
@@ -289,6 +290,31 @@
 						window.app.ui.drawGameList(resp.resp);
 					});
 					$("#app").append(gameListFragmentHtml);
+					break;
+
+				case "#scoreboard":
+					$("#app").html("");
+					var navbarFragment = $("#navbar-fragment").html();
+					var navbarFragmentHtml = $.parseHTML(navbarFragment);
+					if (typeof window.app.data.profile.name !== "undefined") {
+						$(navbarFragmentHtml).find("#main-navbar-list-name").html(window.app.data.profile.name);
+					}
+					$("#app").append(navbarFragmentHtml);
+
+					var scoreboardFragment = $("#scoreboard-fragment").html();
+					var scoreboardFragmentHtml = $.parseHTML(scoreboardFragment);
+					window.app.ws.send({ action: "/scoreboard" }, function (resp) {
+						if (resp.error === true) {
+							alert(resp.desc);
+							return;
+						}
+						if (!Array.isArray(resp.resp)) {
+							alert("Υπήρξε κάποιο πρόβλημα");
+							return;
+						}
+						window.app.ui.drawScoreboard(resp.resp);
+					});
+					$("#app").append(scoreboardFragmentHtml);
 					break;
 
 				default:
@@ -328,11 +354,11 @@
 			if (games.length === 0) {
 				$(gameListFragmentHtml)
 					.find("#game-list-games")
-					.html($("<div/>", { class: "alert alert-info w-100", role: "alert" }).html("Δεν βρέθηκαν παιχνίδια. Δημιουργείστε ενα!"));
+					.html($("<div/>", { class: "alert alert-info w-100 alert-no-games", role: "alert" }).html("Δεν βρέθηκαν παιχνίδια. Δημιουργείστε ενα!"));
 				return;
 			}
-			
-			$(gameListFragmentHtml).find(".alert").remove();
+
+			$(gameListFragmentHtml).find(".alert-no-games").remove();
 
 			var gameTokens = [];
 			var myGames = [];
@@ -433,6 +459,23 @@
 						$(gameBoardFragmentHtml).find(".column").attr("data-token", game.token);
 
 						$(gameModalElemHtml).find("#modal-main-content").append(gameBoardFragmentHtml);
+						$(gameModalElemHtml)
+							.find("#modal-main-abandon-btn")
+							.attr("data-token", game.token)
+							.click(function () {
+								var r = confirm("Είστε σίγουροι;");
+								if (r == false) {
+									return;
+								}
+								var _token = $(this).attr("data-token");
+								window.app.ws.send({ action: "/game/abandon", payload: { token: _token } }, function (resp) {
+									if (resp.error === true) {
+										alert(resp.desc);
+										return;
+									}
+									$("#modal-game-" + _token).modal("hide");
+								});
+							});
 
 						$(gameModalElemHtml).on("show.bs.modal", function (e) {
 							var _token = $(this).attr("data-token");
@@ -520,6 +563,22 @@
 						$(gameBoardFragmentHtml).find(".column").attr("data-token", game.token);
 
 						$(gameModalElemHtml).find("#modal-main-content").append(gameBoardFragmentHtml);
+						$(gameModalElemHtml)
+							.find("#modal-main-abandon-btn")
+							.attr("data-token", game.token)
+							.click(function () {
+								var r = confirm("Είστε σίγουροι;");
+								if (r == false) {
+									return;
+								}
+								var _token = $(this).attr("data-token");
+								window.app.ws.send({ action: "/game/abandon", payload: { token: _token } }, function (resp) {
+									if (resp.error === true) {
+										alert(resp.desc);
+										return;
+									}
+								});
+							});
 
 						$(gameModalElemHtml).on("show.bs.modal", function (e) {
 							var _token = $(this).attr("data-token");
@@ -616,13 +675,13 @@
 
 						$(gameModalElemHtml).on("show.bs.modal", function (e) {
 							var _token = $(this).attr("data-token");
-							// window.app.ws.send({ action: "/game/join", payload: { token: _token } }, function (resp) {
-							// 	if (resp.error === true) {
-							// 		alert(resp.desc);
-							// 		return;
-							// 	}
-							// 	window.app.ws.send({ action: "/game/get/state", payload: { token: _token } });
-							// });
+							window.app.ws.send({ action: "/game/watch", payload: { token: _token } }, function (resp) {
+								if (resp.error === true) {
+									alert(resp.desc);
+									return;
+								}
+								window.app.ws.send({ action: "/game/get/state", payload: { token: _token } });
+							});
 						});
 						$(gameModalElemHtml).on("hidden.bs.modal", function (e) {
 							window.app.ws.send({ action: "/games/open/get" });
@@ -650,44 +709,89 @@
 			var boardElem = $("#modal-game-" + token);
 
 			$(boardElem).find(".gameboard-fragment-notification").addClass("d-none");
+			var currentIntervalId = $(boardElem).find(".gameboard-fragment-notification").attr("data-interval-id");
+			if (currentIntervalId !== "") {
+				clearInterval(currentIntervalId);
+			}
 
 			switch (true) {
-				case typeof info.isEnded !== "undefined" && info.isEnded === true && info.winner === null:
+				case typeof info.isDraw !== "undefined" && Boolean(info.isDraw) === true:
 					$(boardElem).find(".gameboard-fragment-notification").html("Το παιχνίδι έχει τελειώσει ισοπαλία").removeClass("d-none");
 					$(boardElem).find(".modal-footer").remove();
 					break;
-				case typeof info.isEnded !== "undefined" && info.isEnded === true && info.winner !== null:
-					var winnerName = "";
-					if (info.user_id_1 === info.winner) {
-						winnerName = info.user_1.first_name + " " + info.user_1.last_name;
-					} else {
-						winnerName = info.user_2.first_name + " " + info.user_2.last_name;
-					}
+				case typeof info.isEnded !== "undefined" && Boolean(info.isEnded) === true && info.winnerUser !== null:
 					$(boardElem)
 						.find(".gameboard-fragment-notification")
-						.html("Το παιχνίδι έχει τελειώσει με νικητή: " + winnerName)
+						.html("Το παιχνίδι έχει τελειώσει με νικητή: " + info.winnerUser.first_name + " " + info.winnerUser.last_name)
 						.removeClass("d-none");
 					$(boardElem).find(".modal-footer").remove();
 					break;
-				case typeof info.user_2 !== "undefined" && info.user_2 === null:
+				case typeof info.status !== "undefined" && info.status === "CREATED":
 					$(boardElem).find(".gameboard-fragment-notification").html("Αναμένοντας αντίπαλο").removeClass("d-none");
 					break;
-				case typeof info.next !== "undefined" && info.next !== null && window.app.data.profile.id === info.next.id:
-					$(boardElem).find(".gameboard-fragment-notification").html("Είναι η σειρά σου").removeClass("d-none");
+				case typeof info.status !== "undefined" && info.status === "STARTED" && typeof info.nextUser !== "undefined" && info.nextUser !== null && window.app.data.profile.id === info.nextUser.id:
+					var seconds = info.secondsForNextMove;
+					var text = "Είναι η σειρά σου, έχεις {{SECONDS}} δευτερόλεπτα";
+					$(boardElem).find(".gameboard-fragment-notification").attr("data-seconds", info.secondsForNextMove);
+					$(boardElem).find(".gameboard-fragment-notification").attr("data-text", text);
+
+					var intervalId = setInterval(
+						function (elem) {
+							var _seconds = $(elem).attr("data-seconds");
+							var _text = $(elem).attr("data-text");
+							if (_seconds - 1 > 0) {
+								$(elem).attr("data-seconds", _seconds - 1);
+								$(elem)
+									.html(_text.replace("{{SECONDS}}", _seconds - 1))
+									.removeClass("d-none");
+							} else {
+								var currentIntervalId = $(elem).attr("data-interval-id");
+								if (currentIntervalId !== "") {
+									clearInterval(currentIntervalId);
+								}
+							}
+						},
+						1 * 1000,
+						$(boardElem).find(".gameboard-fragment-notification")
+					);
+					$(boardElem).find(".gameboard-fragment-notification").attr("data-interval-id", intervalId);
+					$(boardElem).find(".gameboard-fragment-notification").html(text.replace("{{SECONDS}}", seconds)).removeClass("d-none");
 					break;
-				case typeof info.next !== "undefined" && info.next !== null && window.app.data.profile.id !== info.next.id:
-					$(boardElem)
-						.find(".gameboard-fragment-notification")
-						.html("Είναι η σειρά του " + info.next.first_name + " " + info.next.last_name)
-						.removeClass("d-none");
+				case typeof info.status !== "undefined" && info.status === "STARTED" && typeof info.nextUser !== "undefined" && info.nextUser !== null && window.app.data.profile.id !== info.nextUser.id:
+					var seconds = info.secondsForNextMove;
+					var text = "Είναι η σειρά του " + info.nextUser.first_name + " " + info.nextUser.last_name + ", και έχει {{SECONDS}} δευτερόλεπτα";
+					$(boardElem).find(".gameboard-fragment-notification").attr("data-seconds", info.secondsForNextMove);
+					$(boardElem).find(".gameboard-fragment-notification").attr("data-text", text);
+
+					var intervalId = setInterval(
+						function (elem) {
+							var _seconds = $(elem).attr("data-seconds");
+							var _text = $(elem).attr("data-text");
+							if (_seconds - 1 > 0) {
+								$(elem).attr("data-seconds", _seconds - 1);
+								$(elem)
+									.html(_text.replace("{{SECONDS}}", _seconds - 1))
+									.removeClass("d-none");
+							} else {
+								var currentIntervalId = $(elem).attr("data-interval-id");
+								if (currentIntervalId !== "") {
+									clearInterval(currentIntervalId);
+								}
+							}
+						},
+						1 * 1000,
+						$(boardElem).find(".gameboard-fragment-notification")
+					);
+					$(boardElem).find(".gameboard-fragment-notification").attr("data-interval-id", intervalId);
+					$(boardElem).find(".gameboard-fragment-notification").html(text.replace("{{SECONDS}}", seconds)).removeClass("d-none");
 					break;
 			}
 
 			for (var x in board) {
 				var col = $(".column[data-x='" + x + "'][data-token='" + token + "']");
 				$(col).off("click");
-				if (typeof info.isEnded !== "undefined" && info.isEnded !== true) {
-					if (typeof info.next !== "undefined" && info.next !== null && typeof info.next.id !== "undefined" && parseInt(info.next.id) === parseInt(window.app.data.profile.id)) {
+				if (typeof info.isEnded !== "undefined" && Boolean(info.isEnded) !== true) {
+					if (typeof info.nextUser !== "undefined" && info.nextUser !== null && typeof info.nextUser.id !== "undefined" && parseInt(info.nextUser.id) === parseInt(window.app.data.profile.id)) {
 						$(col).click(function () {
 							var _x = $(this).attr("data-x");
 							var _token = $(this).attr("data-token");
@@ -711,6 +815,32 @@
 					}
 				}
 			}
+		},
+		drawScoreboard: function (scoreboard) {
+			var scoreboardHtml = $("#main-scoreboard");
+
+			if (scoreboard.length === 0) {
+				scoreboardHtml.append($("<div/>", { class: "alert alert-info w-100 alert-no" }).html("Δεν βρέθηκαν παίκτες"));
+				return;
+			}
+
+			var table = $("<table/>", { class: "table table-striped" });
+			var row = $("<tr/>");
+			$(row).append($("<th/>").html("Θέση"));
+			$(row).append($("<th/>").html("Όνομα"));
+			$(row).append($("<th/>").html("Σκορ"));
+			$(table).append(row);
+
+			for (var index = 0; index < scoreboard.length; index++) {
+				var score = scoreboard[index];
+				row = $("<tr/>");
+				$(row).append($("<td/>").html(index + 1));
+				$(row).append($("<td/>").html(score.first_name + " " + score.last_name + " (" + score.email + ")"));
+				$(row).append($("<td/>").html(score.score));
+				$(table).append(row);
+			}
+
+			scoreboardHtml.append(table);
 		},
 	};
 })(window);

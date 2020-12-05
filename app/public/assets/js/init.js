@@ -3,11 +3,9 @@
 	window.app.data = {
 		user_id: null,
 		profile: {},
-		gamesPlaying: [],
-		gamesWatching: [],
 	};
 	window.app.ws = {
-		server: "ws://localhost:8081/",
+		server: "ws://" + window.location.href.split("/").slice(0, 3).join("/").split("://")[1] + "/",
 	};
 	window.app.ui = {};
 	window.app.utils = {};

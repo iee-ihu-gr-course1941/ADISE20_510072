@@ -49,6 +49,10 @@ const routes = [
 		handler: controllers.Games.join.bind(controllers.Games),
 	},
 	{
+		action: "/game/watch",
+		handler: controllers.Games.watch.bind(controllers.Games),
+	},
+	{
 		action: "/game/make/move",
 		handler: controllers.Games.makeMove.bind(controllers.Games),
 	},
@@ -57,8 +61,8 @@ const routes = [
 		handler: controllers.Games.getCurrentState.bind(controllers.Games),
 	},
 	{
-		action: "/game/leave",
-		handler: controllers.Games.leave.bind(controllers.Games),
+		action: "/game/abandon",
+		handler: controllers.Games.abandon.bind(controllers.Games),
 	},
 ];
 

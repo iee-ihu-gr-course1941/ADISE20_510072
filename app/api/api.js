@@ -1,5 +1,4 @@
 const routes = require("./routes");
-const { commonEmitter } = require("../Library/Events.Common");
 
 module.exports = async (req, session) => {
 	let resp = {
@@ -32,10 +31,6 @@ module.exports = async (req, session) => {
 	resp.error = handlerResp.error;
 	resp.desc = handlerResp.desc;
 	resp.resp = handlerResp.resp;
-
-	if (typeof handlerResp.notify !== "undefined") {
-		commonEmitter.emit("_message", handlerResp.notify, resp);
-	}
 
 	if (typeof req.mid !== "undefined") {
 		resp.rmid = req.mid;

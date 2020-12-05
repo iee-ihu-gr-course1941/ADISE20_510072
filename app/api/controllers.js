@@ -1,6 +1,7 @@
 const Users = require("../Library/Users.Class");
 const Stats = require("../Library/Stats.Class");
 const Games = require("../Library/Games.Class");
+const { commonEmitter } = require("../Library/Events.Common");
 
 const controllers = {
 	Users: class {
@@ -12,8 +13,8 @@ const controllers = {
 			};
 			try {
 				resp.resp = Object.assign({}, session);
-				resp.resp.profile = {};
 				delete resp.resp._sockets;
+				delete resp.resp.last_update;
 				if (typeof session.user_id !== "undefined" && session.user_id != null && String(session.user_id).trim() !== "") {
 					const UsersObj = new Users();
 					const user = await UsersObj.getById(session.user_id).catch((e) => {
@@ -265,6 +266,21 @@ const controllers = {
 				resp: null,
 			};
 			try {
+				if (typeof session.user_id === "undefined" || session.user_id == null || String(session.user_id).trim() === "") {
+					resp.error = true;
+					resp.desc = "user must be logged in";
+					return resp;
+				}
+				const StatsObj = new Stats();
+				const users = await StatsObj.scoreboard().catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = users;
+				return resp;
 			} catch (error) {
 				console.error(error);
 				resp.error = true;
@@ -323,15 +339,15 @@ const controllers = {
 				if (resp.error) {
 					return resp;
 				}
-				const games = await GamesObj.getOpen().catch((e) => {
+				const getCurrentState = await GamesObj.getCurrentState(token).catch((e) => {
 					resp.error = true;
 					resp.desc = e.message;
 				});
 				if (resp.error) {
 					return resp;
 				}
-				resp.resp = games;
-				resp.notify = "!null";
+				resp.resp = getCurrentState;
+				commonEmitter.emit("_system", "game/state/update", getCurrentState);
 				return resp;
 			} catch (error) {
 				console.error(error);
@@ -365,15 +381,28 @@ const controllers = {
 				if (resp.error) {
 					return resp;
 				}
+
 				const games = await GamesObj.getOpen().catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				const currentGame = games.filter((g) => g.token === token);
+				if (currentGame.length === 0) {
+					resp.error = true;
+					resp.desc = "Game not found";
+				}
+				if (resp.error) {
+					return resp;
+				}
+				const getCurrentState = await GamesObj.getCurrentState(token).catch((e) => {
 					resp.error = true;
 					resp.desc = e.message;
 				});
 				if (resp.error) {
 					return resp;
 				}
-				resp.resp = games;
-				resp.notify = "!null";
+				resp.resp = getCurrentState;
+				commonEmitter.emit("_system", "game/state/update", getCurrentState);
 				return resp;
 			} catch (error) {
 				console.error(error);
@@ -382,7 +411,7 @@ const controllers = {
 				return resp;
 			}
 		}
-		async makeMove(payload, session) {
+		async makeMove(payload, session, runtime_games) {
 			let resp = {
 				error: false,
 				desc: "",
@@ -405,15 +434,22 @@ const controllers = {
 					return resp;
 				}
 				const GamesObj = new Games();
-				const makeMove = await GamesObj.makeMove(payload.token, session.user_id, payload.x).catch((e) => {
+				const token = await GamesObj.makeMove(payload.token, session.user_id, payload.x).catch((e) => {
 					resp.error = true;
 					resp.desc = e.message;
 				});
 				if (resp.error) {
 					return resp;
 				}
-				resp.resp = makeMove;
-				resp.notify = [makeMove.user_id_1, makeMove.user_id_2];
+				const getCurrentState = await GamesObj.getCurrentState(token).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = getCurrentState;
+				commonEmitter.emit("_system", "game/state/update", getCurrentState);
 				return resp;
 			} catch (error) {
 				console.error(error);
@@ -422,7 +458,7 @@ const controllers = {
 				return resp;
 			}
 		}
-		async getCurrentState(payload, session) {
+		async getCurrentState(payload, session, runtime_games) {
 			let resp = {
 				error: false,
 				desc: "",
@@ -448,6 +484,7 @@ const controllers = {
 					return resp;
 				}
 				resp.resp = getCurrentState;
+				commonEmitter.emit("_system", "game/state/update", getCurrentState);
 				return resp;
 			} catch (error) {
 				console.error(error);
@@ -456,7 +493,7 @@ const controllers = {
 				return resp;
 			}
 		}
-		async leave(payload, session) {
+		async abandon(payload, session, runtime_games) {
 			let resp = {
 				error: false,
 				desc: "",
@@ -468,6 +505,67 @@ const controllers = {
 					resp.desc = "user must be logged in";
 					return resp;
 				}
+				if (typeof payload.token === "undefined" || payload.token == null || String(payload.token).trim() === "") {
+					resp.error = true;
+					resp.desc = "token is required";
+					return resp;
+				}
+				const GamesObj = new Games();
+				const token = await GamesObj.abandon(payload.token, session.user_id).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				const getCurrentState = await GamesObj.getCurrentState(token).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = getCurrentState;
+				commonEmitter.emit("_system", "game/state/update", getCurrentState);
+				return resp;
+			} catch (error) {
+				console.error(error);
+				resp.error = true;
+				resp.desc = "Internal Server Error";
+				return resp;
+			}
+		}
+		async watch(payload, session, runtime_games) {
+			let resp = {
+				error: false,
+				desc: "",
+				resp: null,
+			};
+			try {
+				if (typeof session.user_id === "undefined" || session.user_id == null || String(session.user_id).trim() === "") {
+					resp.error = true;
+					resp.desc = "user must be logged in";
+					return resp;
+				}
+				if (typeof payload.token === "undefined" || payload.token == null || String(payload.token).trim() === "") {
+					resp.error = true;
+					resp.desc = "token is required";
+					return resp;
+				}
+				if (typeof runtime_games[payload.token] === "undefined" || runtime_games[payload.token] == null || String(runtime_games[payload.token]).trim() === "") {
+					resp.error = true;
+					resp.desc = "game is not in runtime is required";
+					return resp;
+				}
+				const GamesObj = new Games();
+				const getCurrentState = await GamesObj.getCurrentState(payload.token).catch((e) => {
+					resp.error = true;
+					resp.desc = e.message;
+				});
+				if (resp.error) {
+					return resp;
+				}
+				resp.resp = getCurrentState;
 				return resp;
 			} catch (error) {
 				console.error(error);

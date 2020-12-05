@@ -29,12 +29,6 @@
 		if (typeof data.action !== "undefined" && typeof data.resp === "object" && data.resp !== null) {
 			if (data.action === "/session") {
 				window.app.data.user_id = data.resp.user_id;
-				if (typeof data.resp.gamesPlaying !== "undefined") {
-					window.app.data.gamesPlaying = data.resp.gamesPlaying;
-				}
-				if (typeof data.resp.gamesWatching !== "undefined") {
-					window.app.data.gamesWatching = data.resp.gamesWatching;
-				}
 				if (typeof data.resp.profile !== "undefined") {
 					window.app.data.profile = data.resp.profile;
 					window.app.data.profile.name = window.app.data.profile.first_name + " " + window.app.data.profile.last_name;
@@ -52,18 +46,39 @@
 		} else {
 			if (data.error === false) {
 				switch (data.action) {
+					case "/notify/game/status":
+						if (typeof data.resp.status !== "undefined") {
+							switch (data.resp.status) {
+								case "CREATED":
+								case "STARTED":
+									window.app.ws.send({ action: "/games/open/get" }, function (_data) {
+										window.app.ui.drawGameList(_data.resp);
+										window.app.ui.drawBoard(data.resp);
+									});
+									break;
+
+								case "COMPLETED":
+								case "ABANDONED":
+									window.app.ui.drawBoard(data.resp);
+									break;
+
+								default:
+									break;
+							}
+						}
+
+						break;
+
+					case "/game/create":
+					case "/game/join":
 					case "/game/make/move":
 					case "/game/get/state":
+					case "/game/abandon":
 						window.app.ui.drawBoard(data.resp);
 						break;
 
 					case "/games/open/get":
-					case "/game/create":
-					case "/game/join":
 						window.app.ui.drawGameList(data.resp);
-						break;
-
-					default:
 						break;
 				}
 			}

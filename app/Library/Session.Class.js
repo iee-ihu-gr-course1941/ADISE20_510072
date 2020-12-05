@@ -4,8 +4,6 @@ class Session {
 		this.user_id = null;
 		this.last_update = new Date().getTime();
 		this._sockets = {};
-		this.gamesPlaying = [];
-		this.gamesWatching = [];
 	}
 	send(mesasge) {
 		try {
@@ -28,22 +26,6 @@ class Session {
 		if (typeof this._sockets[socket_id] !== "undefined") {
 			delete this._sockets[socket_id];
 		}
-	}
-	addPlayingGame(token) {
-		if (this.gamesPlaying.indexOf(token) === -1) {
-			this.gamesPlaying.push(token);
-		}
-	}
-	removePlayingGame(token) {
-		this.gamesPlaying = this.gamesPlaying.filter((e) => e !== token);
-	}
-	addWatchingGame(token) {
-		if (this.gamesWatching.indexOf(token) === -1) {
-			this.gamesWatching.push(token);
-		}
-	}
-	removeWatchingGame(token) {
-		this.gamesWatching = this.gamesWatching.filter((e) => e !== token);
 	}
 }
 
